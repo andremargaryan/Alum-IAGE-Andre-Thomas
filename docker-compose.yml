@@ -4,6 +4,19 @@ services:
     container_name: alum_iage_backend
     ports:
       - "8080:8080"
+    environment:
+      # Dans le réseau Docker, la base s'appelle "mysql" (pas localhost)
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/alumni?serverTimezone=Europe/Paris&allowPublicKeyRetrieval=true&useSSL=false
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER:-alumni_app}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD:-alumni_app_pwd}
+      SPRING_ARTEMIS_BROKER_URL: tcp://artemis:61616
+      SPRING_ARTEMIS_USER: ${ARTEMIS_USER:-artemis}
+      SPRING_ARTEMIS_PASSWORD: ${ARTEMIS_PASSWORD:-artemis}
+    depends_on:
+      mysql:
+        condition: service_healthy
+      artemis:
+        condition: service_started
     networks:
       - app-network
 
@@ -17,6 +30,65 @@ services:
     networks:
       - app-network
 
+  mysql:
+    image: mysql:8.4
+    container_name: alum_iage_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root_alumni}
+      MYSQL_DATABASE: alumni
+      MYSQL_USER: ${MYSQL_USER:-alumni_app}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-alumni_app_pwd}
+      TZ: Europe/Paris
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --log-bin-trust-function-creators=1   # triggers créables depuis phpMyAdmin
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./db/init:/docker-entrypoint-initdb.d:ro   # scripts .sql exécutés au 1er démarrage (volume vide)
+    healthcheck:
+      # via TCP : le serveur temporaire de l'initialisation n'écoute pas en TCP, donc "healthy" = scripts db/init terminés
+      test: ["CMD-SHELL", "mysql -h 127.0.0.1 --protocol=tcp -u$$MYSQL_USER -p$$MYSQL_PASSWORD -e \"SELECT 1 FROM alumni.users LIMIT 1\""]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 60s
+    networks:
+      - app-network
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: alum_iage_phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      UPLOAD_LIMIT: 64M
+    ports:
+      - "8081:80"            # http://localhost:8081
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  artemis:
+    image: apache/activemq-artemis:latest-alpine
+    container_name: alum_iage_artemis
+    restart: unless-stopped
+    environment:
+      ARTEMIS_USER: ${ARTEMIS_USER:-artemis}
+      ARTEMIS_PASSWORD: ${ARTEMIS_PASSWORD:-artemis}
+      ANONYMOUS_LOGIN: "false"
+    ports:
+      - "61616:61616"        # broker JMS
+      - "8161:8161"          # console : http://localhost:8161
+    networks:
+      - app-network
+
 networks:
   app-network:
     driver: bridge
+
+volumes:
+  mysql-data:
