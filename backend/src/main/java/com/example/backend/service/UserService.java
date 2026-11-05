@@ -1,11 +1,18 @@
 package com.example.backend.service;
 
+import com.example.backend.dto.UserRegistrationDto;
 import com.example.backend.dto.UserResponseDto;
+import com.example.backend.entity.Role;
 import com.example.backend.entity.StatutUser;
 import com.example.backend.entity.User;
 import com.example.backend.repository.UserRepository;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,9 +20,45 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    public UserResponseDto createUser(UserRegistrationDto registration) {
+        if (registration.getRole() != null && registration.getRole() != Role.ETUDIANT) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Le rôle doit être ETUDIANT.");
+        }
+
+        String password = registration.getMotDePasse();
+        if (password.getBytes(StandardCharsets.UTF_8).length > 72) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Le mot de passe dépasse 72 octets.");
+        }
+
+        String email = registration.getEmail();
+        if (userRepository.existsByEmail(email)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Cet email est déjà utilisé.");
+        }
+
+        User user = new User();
+        user.setPrenom(registration.getPrenom());
+        user.setNom(registration.getNom());
+        user.setEmail(email);
+        user.setMotDePasse(passwordEncoder.encode(password));
+        user.setDateNaissance(registration.getDateNaissance());
+        user.setVille(registration.getVille());
+
+        try {
+            return toResponseDto(userRepository.save(user));
+        } catch (DataIntegrityViolationException exception) {
+            // Deux inscriptions peuvent passer le premier contrôle en même temps.
+            if (userRepository.existsByEmail(email)) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "Cet email est déjà utilisé.", exception);
+            }
+            throw exception;
+        }
     }
 
     public List<UserResponseDto> getAllUsers() {
