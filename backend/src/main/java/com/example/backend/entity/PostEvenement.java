@@ -31,10 +31,4 @@ public class PostEvenement extends Post {
 
     @Column(name = "capacite_max")
     private Integer capaciteMax;                        // null = places illimitées
-
-    // Verrou optimiste : Hibernate l'incrémente à chaque modification de l'événement.
-    // Sert à éviter le surbooking quand deux personnes prennent la dernière place en même temps (ALUMNI-11).
-    @Version
-    @Column(nullable = false)
-    private Integer version;
 }

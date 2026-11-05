@@ -147,7 +147,6 @@ CREATE TABLE post_evenement (
     lieu            VARCHAR(150)  NOT NULL,
     adresse         VARCHAR(255)  NOT NULL,
     capacite_max    INT UNSIGNED  NULL,                         -- NULL = illimité
-    version         INT UNSIGNED  NOT NULL DEFAULT 0,           -- verrou optimiste JPA (@Version)
     PRIMARY KEY (post_id),
     KEY idx_evt_date (date_evenement),
     CONSTRAINT fk_evt_post FOREIGN KEY (post_id) REFERENCES post (post_id) ON DELETE CASCADE,
