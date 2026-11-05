@@ -1,0 +1,29 @@
+info:
+  name: 04 - Consulter un identifiant inconnu
+  type: http
+  seq: 4
+
+http:
+  method: GET
+  url: "{{baseUrl}}/users/{{idInconnu}}"
+  headers:
+    - name: Accept
+      value: application/json
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        test("Statut HTTP 404", function () {
+            expect(res.getStatus()).to.equal(404);
+        });
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
+
+docs: Utilise un entier valide qui ne correspond à aucun compte. L’API doit répondre 404.
