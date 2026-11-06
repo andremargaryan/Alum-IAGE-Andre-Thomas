@@ -1,0 +1,37 @@
+info:
+  name: 08 - Liker le sujet publié
+  type: http
+  seq: 8
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/posts/{{sujetId}}/like"
+  headers:
+    - name: Accept
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{jetonHugo}}"
+
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("Statut HTTP 200", function () {
+            expect(res.getStatus()).to.equal(200);
+        });
+
+        test("Le like est ajouté", function () {
+            expect(res.getBody().aime).to.equal(true);
+            expect(res.getBody().nombreLikes).to.equal(1);
+        });
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
+
+docs: "Premier clic : une ligne est créée dans post_like."

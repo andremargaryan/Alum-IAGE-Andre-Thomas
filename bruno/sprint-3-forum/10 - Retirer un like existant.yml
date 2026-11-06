@@ -1,0 +1,37 @@
+info:
+  name: 10 - Retirer un like existant
+  type: http
+  seq: 10
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/posts/3/like"
+  headers:
+    - name: Accept
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{jetonHugo}}"
+
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("Statut HTTP 200", function () {
+            expect(res.getStatus()).to.equal(200);
+        });
+
+        test("Hugo avait déjà liké le sujet 3 : le like est retiré", function () {
+            expect(res.getBody().aime).to.equal(false);
+            expect(res.getBody().nombreLikes).to.equal(1);
+        });
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
+
+docs: "Données de départ : le sujet 3 a 2 likes dont celui de Hugo."

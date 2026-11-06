@@ -1,0 +1,46 @@
+info:
+  name: 04 - Refuser un sujet incomplet
+  type: http
+  seq: 4
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/posts"
+  headers:
+    - name: Accept
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{jetonHugo}}"
+    - name: Content-Type
+      value: application/json
+  auth: inherit
+  body:
+    type: json
+    data: |-
+      {
+        "titre": "",
+        "categorieId": 6
+      }
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("Statut HTTP 400", function () {
+            expect(res.getStatus()).to.equal(400);
+        });
+
+        test("Les champs fautifs sont listés", function () {
+            const details = res.getBody().details;
+            expect(details).to.have.property("titre");
+            expect(details).to.have.property("description");
+        });
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
+
+docs: "Titre vide et description absente : 400 avec le détail par champ."
