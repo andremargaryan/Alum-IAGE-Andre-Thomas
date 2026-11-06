@@ -1,12 +1,14 @@
 info:
   name: 12 - Ajouter une formation
   type: http
-  seq: 12
+  seq: 13
 
 http:
   method: POST
   url: "{{baseUrl}}/api/users/{{sprint2UserId}}/formations"
   headers:
+    - name: Authorization
+      value: "Bearer {{jeton}}"
     - name: Accept
       value: application/json
     - name: Content-Type

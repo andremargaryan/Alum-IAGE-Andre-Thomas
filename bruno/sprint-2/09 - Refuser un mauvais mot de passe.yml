@@ -1,12 +1,14 @@
 info:
   name: 09 - Refuser un mauvais mot de passe
   type: http
-  seq: 9
+  seq: 10
 
 http:
   method: POST
   url: "{{baseUrl}}/api/auth/login"
   headers:
+    - name: Authorization
+      value: "Bearer {{jeton}}"
     - name: Accept
       value: application/json
     - name: Content-Type

@@ -11,6 +11,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AuthResponseDto {
+    // Jeton JWT à renvoyer dans l'en-tête "Authorization: Bearer <token>" de chaque requête suivante
+    private String token;
+    // Durée de validité du jeton, en minutes
+    private Long expireDansMinutes;
     private Integer userId;
     private String nom;
     private String prenom;

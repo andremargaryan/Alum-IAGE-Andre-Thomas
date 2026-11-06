@@ -1,12 +1,14 @@
 info:
   name: 10 - Ajouter une expérience
   type: http
-  seq: 10
+  seq: 11
 
 http:
   method: POST
   url: "{{baseUrl}}/api/users/{{sprint2UserId}}/experiences"
   headers:
+    - name: Authorization
+      value: "Bearer {{jeton}}"
     - name: Accept
       value: application/json
     - name: Content-Type

@@ -1,0 +1,50 @@
+info:
+  name: 01b - Obtenir le jeton JWT
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/auth/login"
+  headers:
+    - name: Accept
+      value: application/json
+    - name: Content-Type
+      value: application/json
+  auth: inherit
+  body:
+    type: json
+    data: |-
+      {
+        "email": "{{sprint2Email}}",
+        "motDePasse": "Sprint2Essai!"
+      }
+
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+        if (!bru.getVar("sprint2UserId")) {
+            throw new Error("Lance d’abord la requête 01 pour créer le compte du Sprint 2.");
+        }
+    - type: tests
+      code: |-
+        test("Statut HTTP 200", function () {
+            expect(res.getStatus()).to.equal(200);
+        });
+
+        test("Le login renvoie un jeton JWT", function () {
+            const jeton = res.getBody().token;
+            expect(jeton).to.be.a("string");
+            expect(jeton.split(".").length).to.equal(3);
+            bru.setVar("jeton", jeton);
+        });
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
+
+docs: Se connecte avec le compte créé en 01 et range le jeton dans la variable "jeton", envoyée ensuite dans l'en-tête Authorization des requêtes protégées.

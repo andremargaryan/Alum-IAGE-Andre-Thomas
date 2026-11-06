@@ -12,6 +12,8 @@ services:
       SPRING_ARTEMIS_BROKER_URL: tcp://artemis:61616
       SPRING_ARTEMIS_USER: ${ARTEMIS_USER:-artemis}
       SPRING_ARTEMIS_PASSWORD: ${ARTEMIS_PASSWORD:-artemis}
+      # Clé JWT lue dans le fichier .env (voir .env.example). Sans elle, docker compose refuse de démarrer.
+      JWT_SECRET: ${JWT_SECRET:?Variable JWT_SECRET manquante - copiez .env.example en .env et remplissez-la}
     depends_on:
       mysql:
         condition: service_healthy

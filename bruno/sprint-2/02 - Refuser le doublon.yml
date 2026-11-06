@@ -1,7 +1,7 @@
 info:
   name: 02 - Refuser le doublon
   type: http
-  seq: 2
+  seq: 3
 
 http:
   method: POST
