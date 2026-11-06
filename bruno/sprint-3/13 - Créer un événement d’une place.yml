@@ -1,0 +1,42 @@
+info:
+  name: 13 - Créer un événement d’une place
+  type: http
+  seq: 13
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/events"
+  headers:
+    - name: Accept
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{jetonLea}}"
+    - name: Content-Type
+      value: application/json
+  auth: inherit
+  body:
+    type: json
+    data: |-
+      {
+        "titre": "Atelier de test des inscriptions",
+        "description": "Événement créé pour vérifier la file d’attente.",
+        "categorieId": 4,
+        "dateEvenement": "2030-06-15T19:00:00",
+        "lieu": "Salle de test",
+        "adresse": "1 rue du Test, Paris",
+        "capaciteMax": 1
+      }
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("Statut HTTP 201", function () {
+            expect(res.getStatus()).to.equal(201);
+        });
+
+        test("L’événement a une place disponible", function () {
+            const evenement = res.getBody();
+            expect(evenement.placesRestantes).to.equal(1);
+            bru.setVar("evenementInscriptionId", evenement.id);
+        });

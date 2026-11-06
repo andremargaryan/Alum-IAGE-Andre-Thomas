@@ -1,0 +1,26 @@
+info:
+  name: 21 - Réinscrire Hugo en file d’attente
+  type: http
+  seq: 21
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/events/{{evenementInscriptionId}}/inscriptions"
+  headers:
+    - name: Accept
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{jetonHugo}}"
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("Statut HTTP 200", function () {
+            expect(res.getStatus()).to.equal(200);
+        });
+
+        test("Première place dans la file", function () {
+            expect(res.getBody()).to.deep.equal({ statut: "EN_ATTENTE", rang: 1 });
+        });

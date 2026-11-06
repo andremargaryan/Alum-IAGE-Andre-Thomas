@@ -1,0 +1,22 @@
+info:
+  name: 18 - Désinscrire Hugo et libérer une place
+  type: http
+  seq: 18
+
+http:
+  method: DELETE
+  url: "{{baseUrl}}/api/events/{{evenementInscriptionId}}/inscriptions"
+  headers:
+    - name: Accept
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{jetonHugo}}"
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("Statut HTTP 204", function () {
+            expect(res.getStatus()).to.equal(204);
+        });

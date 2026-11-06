@@ -1,0 +1,29 @@
+info:
+  name: 17 - Consulter les inscrits et le nombre en attente
+  type: http
+  seq: 17
+
+http:
+  method: GET
+  url: "{{baseUrl}}/api/events/{{evenementInscriptionId}}/inscriptions"
+  headers:
+    - name: Accept
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{jetonLea}}"
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("Statut HTTP 200", function () {
+            expect(res.getStatus()).to.equal(200);
+        });
+
+        test("La liste nomme Hugo et compte Léa sans la nommer", function () {
+            expect(res.getBody()).to.deep.equal({
+                participants: [{ nom: "Dubois", prenom: "Hugo" }],
+                nombreEnAttente: 1
+            });
+        });

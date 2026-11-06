@@ -1,0 +1,26 @@
+info:
+  name: 15 - Placer Léa en file d’attente
+  type: http
+  seq: 15
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/events/{{evenementInscriptionId}}/inscriptions"
+  headers:
+    - name: Accept
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{jetonLea}}"
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("Statut HTTP 200", function () {
+            expect(res.getStatus()).to.equal(200);
+        });
+
+        test("Première place dans la file", function () {
+            expect(res.getBody()).to.deep.equal({ statut: "EN_ATTENTE", rang: 1 });
+        });

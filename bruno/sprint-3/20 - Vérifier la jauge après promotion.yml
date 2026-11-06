@@ -1,0 +1,29 @@
+info:
+  name: 20 - Vérifier la jauge après promotion
+  type: http
+  seq: 20
+
+http:
+  method: GET
+  url: "{{baseUrl}}/api/events/{{evenementInscriptionId}}"
+  headers:
+    - name: Accept
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{jetonLea}}"
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("Statut HTTP 200", function () {
+            expect(res.getStatus()).to.equal(200);
+        });
+
+        test("La place libérée est occupée par Léa", function () {
+            const evenement = res.getBody();
+            expect(evenement.nombreInscrits).to.equal(1);
+            expect(evenement.placesRestantes).to.equal(0);
+            expect(evenement.complet).to.equal(true);
+        });

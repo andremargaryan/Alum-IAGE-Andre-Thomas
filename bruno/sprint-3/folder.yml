@@ -1,5 +1,5 @@
 info:
-  name: Sprint 3 - ALUMNI-10 Événements
+  name: Sprint 3 - Événements et inscriptions
   type: folder
   seq: 2
 
@@ -11,3 +11,5 @@ docs: |-
   Utilise les comptes des données de départ (mot de passe "password") :
   Léa (ORGANISATEUR) crée l’événement, Hugo (ETUDIANT) doit être refusé.
   L’événement 1 des données de départ a 3 places et 3 inscrits : il doit être complet.
+  Les requêtes 13 à 23 créent leur propre événement et vérifient les inscriptions,
+  la file d’attente, la promotion et la jauge après désinscription.

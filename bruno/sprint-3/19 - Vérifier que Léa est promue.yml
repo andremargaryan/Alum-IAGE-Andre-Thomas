@@ -1,0 +1,26 @@
+info:
+  name: 19 - Vérifier que Léa est promue
+  type: http
+  seq: 19
+
+http:
+  method: GET
+  url: "{{baseUrl}}/api/events/{{evenementInscriptionId}}/inscriptions/me"
+  headers:
+    - name: Accept
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{jetonLea}}"
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("Statut HTTP 200", function () {
+            expect(res.getStatus()).to.equal(200);
+        });
+
+        test("Inscription confirmée, sans rang", function () {
+            expect(res.getBody()).to.deep.equal({ statut: "INSCRIT", rang: null });
+        });
