@@ -1,0 +1,32 @@
+info:
+  name: 09 - Refuser une inscription en administrateur
+  type: http
+  seq: 9
+
+http:
+  method: POST
+  url: "{{baseUrl}}/users"
+  headers:
+    - name: Accept
+      value: application/json
+    - name: Content-Type
+      value: application/json
+  auth: inherit
+  body:
+    type: json
+    data: |-
+      {
+        "prenom": "Camille",
+        "nom": "Test",
+        "email": "camille.inscription@example.test",
+        "motDePasse": "Essai2026!",
+        "role": "ADMIN"
+      }
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("Statut HTTP 400", function () {
+            expect(res.getStatus()).to.equal(400);
+        });
