@@ -26,8 +26,14 @@ runtime:
   scripts:
     - type: before-request
       code: |-
+        bru.setVar("idCompteTest", "");
         const suffixe = Date.now() + "-" + Math.random().toString(36).slice(2);
         bru.setVar("emailInscriptionTest", "camille." + suffixe + "@example.test");
+    - type: after-response
+      code: |-
+        if (res.getStatus() === 201) {
+            bru.setVar("idCompteTest", String(res.getBody().id));
+        }
     - type: tests
       code: |-
         test("Statut HTTP 201", function () {
