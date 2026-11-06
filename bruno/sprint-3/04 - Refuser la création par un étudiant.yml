@@ -1,0 +1,45 @@
+info:
+  name: 04 - Refuser la création par un étudiant
+  type: http
+  seq: 4
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/events"
+  headers:
+    - name: Accept
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{jetonHugo}}"
+    - name: Content-Type
+      value: application/json
+  auth: inherit
+  body:
+    type: json
+    data: |-
+      {
+        "titre": "Soirée de test Bruno",
+        "description": "Créée par les tests du sprint 3.",
+        "categorieId": 1,
+        "dateEvenement": "2030-06-15T19:00:00",
+        "lieu": "Bar de test",
+        "adresse": "1 rue du Test, 75013 Paris",
+        "capaciteMax": 20
+      }
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("Statut HTTP 403", function () {
+            expect(res.getStatus()).to.equal(403);
+        });
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
+
+docs: "Un ETUDIANT ne peut pas créer d’événement."

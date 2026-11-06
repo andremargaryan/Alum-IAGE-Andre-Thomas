@@ -1,0 +1,38 @@
+info:
+  name: 09 - Filtrer par mot-clé
+  type: http
+  seq: 9
+
+http:
+  method: GET
+  url: "{{baseUrl}}/api/events?motCle=agentique"
+  headers:
+    - name: Accept
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{jetonHugo}}"
+
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("Statut HTTP 200", function () {
+            expect(res.getStatus()).to.equal(200);
+        });
+
+        test("Seule la conférence IA est trouvée", function () {
+            const liste = res.getBody();
+            expect(liste.length).to.equal(1);
+            expect(liste[0].id).to.equal(2);
+        });
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
+
+docs: "Le mot-clé est cherché dans le titre et la description."

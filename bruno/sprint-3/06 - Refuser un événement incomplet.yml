@@ -1,0 +1,50 @@
+info:
+  name: 06 - Refuser un événement incomplet
+  type: http
+  seq: 6
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/events"
+  headers:
+    - name: Accept
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{jetonLea}}"
+    - name: Content-Type
+      value: application/json
+  auth: inherit
+  body:
+    type: json
+    data: |-
+      {
+        "titre": "",
+        "categorieId": 1,
+        "dateEvenement": "2020-01-01T10:00:00",
+        "lieu": "Quelque part",
+        "adresse": "Une adresse"
+      }
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("Statut HTTP 400", function () {
+            expect(res.getStatus()).to.equal(400);
+        });
+
+        test("Les champs fautifs sont listés", function () {
+            const details = res.getBody().details;
+            expect(details).to.have.property("titre");
+            expect(details).to.have.property("description");
+            expect(details).to.have.property("dateEvenement");
+        });
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
+
+docs: "Titre vide, description absente et date passée : 400 avec le détail par champ."
