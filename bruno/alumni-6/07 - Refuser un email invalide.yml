@@ -1,0 +1,31 @@
+info:
+  name: 07 - Refuser un email invalide
+  type: http
+  seq: 7
+
+http:
+  method: POST
+  url: "{{baseUrl}}/users"
+  headers:
+    - name: Accept
+      value: application/json
+    - name: Content-Type
+      value: application/json
+  auth: inherit
+  body:
+    type: json
+    data: |-
+      {
+        "prenom": "Camille",
+        "nom": "Test",
+        "email": "email-invalide",
+        "motDePasse": "Essai2026!"
+      }
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("Statut HTTP 400", function () {
+            expect(res.getStatus()).to.equal(400);
+        });

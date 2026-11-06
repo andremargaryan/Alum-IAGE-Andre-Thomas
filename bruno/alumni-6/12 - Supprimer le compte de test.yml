@@ -1,0 +1,27 @@
+info:
+  name: 12 - Supprimer le compte de test
+  type: http
+  seq: 12
+
+http:
+  method: DELETE
+  url: "{{baseUrl}}/users/{{idCompteTest}}"
+  headers:
+    - name: Accept
+      value: application/json
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+        if (!bru.getVar("idCompteTest")) {
+            throw new Error("Lance d’abord la requête 05 pour créer un compte de test.");
+        }
+    - type: tests
+      code: |-
+        test("Statut HTTP 204", function () {
+            expect(res.getStatus()).to.equal(204);
+        });
+
+docs: Supprime le compte créé par la requête 05.

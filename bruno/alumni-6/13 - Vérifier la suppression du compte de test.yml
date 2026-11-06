@@ -1,0 +1,27 @@
+info:
+  name: 13 - Vérifier la suppression du compte de test
+  type: http
+  seq: 13
+
+http:
+  method: GET
+  url: "{{baseUrl}}/users/{{idCompteTest}}"
+  headers:
+    - name: Accept
+      value: application/json
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+        if (!bru.getVar("idCompteTest")) {
+            throw new Error("Lance d’abord la requête 05 pour créer un compte de test.");
+        }
+    - type: tests
+      code: |-
+        test("Statut HTTP 404", function () {
+            expect(res.getStatus()).to.equal(404);
+        });
+
+docs: Vérifie que le compte supprimé est inaccessible.
