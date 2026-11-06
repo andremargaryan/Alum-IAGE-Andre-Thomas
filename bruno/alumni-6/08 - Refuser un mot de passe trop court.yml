@@ -1,0 +1,31 @@
+info:
+  name: 08 - Refuser un mot de passe trop court
+  type: http
+  seq: 8
+
+http:
+  method: POST
+  url: "{{baseUrl}}/users"
+  headers:
+    - name: Accept
+      value: application/json
+    - name: Content-Type
+      value: application/json
+  auth: inherit
+  body:
+    type: json
+    data: |-
+      {
+        "prenom": "Camille",
+        "nom": "Test",
+        "email": "camille.inscription@example.test",
+        "motDePasse": "abc"
+      }
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("Statut HTTP 400", function () {
+            expect(res.getStatus()).to.equal(400);
+        });

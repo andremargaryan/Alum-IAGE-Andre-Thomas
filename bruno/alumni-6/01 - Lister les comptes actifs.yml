@@ -1,0 +1,43 @@
+info:
+  name: 01 - Lister les comptes actifs
+  type: http
+  seq: 1
+
+http:
+  method: GET
+  url: "{{baseUrl}}/users"
+  headers:
+    - name: Accept
+      value: application/json
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        test("Statut HTTP 200", function () {
+            expect(res.getStatus()).to.equal(200);
+        });
+
+        test("La réponse est une liste de comptes actifs", function () {
+            const users = res.getBody();
+            expect(users).to.be.an("array");
+            users.forEach(function (user) {
+                expect(user.statut).to.equal("ACTIF");
+            });
+        });
+
+        test("La liste ne contient aucun mot de passe", function () {
+            res.getBody().forEach(function (user) {
+                expect(user).to.not.have.property("motDePasse");
+            });
+        });
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
+
+docs: Vérifie que la liste contient uniquement des comptes actifs et que leurs fiches n’exposent pas le champ motDePasse.

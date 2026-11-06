@@ -1,0 +1,47 @@
+info:
+  name: 10 - Modifier le compte de test
+  type: http
+  seq: 10
+
+http:
+  method: PUT
+  url: "{{baseUrl}}/users/{{idCompteTest}}"
+  headers:
+    - name: Accept
+      value: application/json
+    - name: Content-Type
+      value: application/json
+  auth: inherit
+  body:
+    type: json
+    data: |-
+      {
+        "prenom": "Camille",
+        "nom": "Modifie",
+        "ville": "Lyon",
+        "dateNaissance": "2001-04-15",
+        "notificationsActives": false
+      }
+
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+        if (!bru.getVar("idCompteTest")) {
+            throw new Error("Lance d’abord la requête 05 pour créer un compte de test.");
+        }
+    - type: tests
+      code: |-
+        test("Statut HTTP 200", function () {
+            expect(res.getStatus()).to.equal(200);
+        });
+
+        test("La fiche contient les changements", function () {
+            const user = res.getBody();
+            expect(user.id).to.equal(Number(bru.getVar("idCompteTest")));
+            expect(user.nom).to.equal("Modifie");
+            expect(user.ville).to.equal("Lyon");
+            expect(user).to.not.have.property("motDePasse");
+        });
+
+docs: Vérifie que la modification renvoie la fiche mise à jour.
