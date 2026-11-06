@@ -1,12 +1,14 @@
 info:
   name: 15 - Modifier le compte
   type: http
-  seq: 15
+  seq: 16
 
 http:
   method: PUT
   url: "{{baseUrl}}/users/{{sprint2UserId}}"
   headers:
+    - name: Authorization
+      value: "Bearer {{jeton}}"
     - name: Accept
       value: application/json
     - name: Content-Type

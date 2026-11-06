@@ -1,12 +1,14 @@
 info:
   name: 08 - Connecter le compte créé
   type: http
-  seq: 8
+  seq: 9
 
 http:
   method: POST
   url: "{{baseUrl}}/api/auth/login"
   headers:
+    - name: Authorization
+      value: "Bearer {{jeton}}"
     - name: Accept
       value: application/json
     - name: Content-Type

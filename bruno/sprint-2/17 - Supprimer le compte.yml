@@ -1,12 +1,14 @@
 info:
   name: 17 - Supprimer le compte
   type: http
-  seq: 17
+  seq: 18
 
 http:
   method: DELETE
   url: "{{baseUrl}}/users/{{sprint2UserId}}"
   headers:
+    - name: Authorization
+      value: "Bearer {{jeton}}"
     - name: Accept
       value: application/json
   auth: inherit

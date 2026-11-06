@@ -1,7 +1,7 @@
 info:
   name: 03 - Refuser un email invalide
   type: http
-  seq: 3
+  seq: 4
 
 http:
   method: POST

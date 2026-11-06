@@ -1,12 +1,14 @@
 info:
   name: 20 - Refuser le profil après suppression
   type: http
-  seq: 20
+  seq: 21
 
 http:
   method: GET
   url: "{{baseUrl}}/api/users/{{sprint2UserId}}/experiences"
   headers:
+    - name: Authorization
+      value: "Bearer {{jeton}}"
     - name: Accept
       value: application/json
   auth: inherit

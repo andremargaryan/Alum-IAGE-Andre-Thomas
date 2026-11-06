@@ -1,12 +1,14 @@
 info:
   name: 06 - Lister les comptes actifs
   type: http
-  seq: 6
+  seq: 7
 
 http:
   method: GET
   url: "{{baseUrl}}/users"
   headers:
+    - name: Authorization
+      value: "Bearer {{jeton}}"
     - name: Accept
       value: application/json
   auth: inherit
