@@ -2,14 +2,21 @@ package com.example.backend.repository;
 
 import com.example.backend.entity.PostEvenement;
 import com.example.backend.entity.StatutPost;
+import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface PostEvenementRepository extends JpaRepository<PostEvenement, Integer> {
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT e FROM PostEvenement e WHERE e.id = :id")
+    Optional<PostEvenement> findByIdForUpdate(@Param("id") Integer id);
 
     // Les événements à venir, du plus proche au plus lointain
     List<PostEvenement> findByDateEvenementAfterOrderByDateEvenementAsc(LocalDateTime date);

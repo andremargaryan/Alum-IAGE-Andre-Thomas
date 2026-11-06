@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -39,8 +38,7 @@ public class EvenementInscription {
     @Column(nullable = false)
     private StatutInscription statut = StatutInscription.INSCRIT;
 
-    @CreationTimestamp
-    @Column(name = "date_inscription", nullable = false, updatable = false)
+    @Column(name = "date_inscription", nullable = false)
     private LocalDateTime dateInscription;
 
     // Constructeur pratique : new EvenementInscription(evenement, user, StatutInscription.EN_ATTENTE)
