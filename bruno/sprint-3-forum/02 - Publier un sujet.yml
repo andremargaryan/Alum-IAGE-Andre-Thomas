@@ -1,0 +1,50 @@
+info:
+  name: 02 - Publier un sujet
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/posts"
+  headers:
+    - name: Accept
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{jetonHugo}}"
+    - name: Content-Type
+      value: application/json
+  auth: inherit
+  body:
+    type: json
+    data: |-
+      {
+        "titre": "Sujet de test Bruno",
+        "description": "Publié par les tests du forum.",
+        "categorieId": 6
+      }
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("Statut HTTP 201", function () {
+            expect(res.getStatus()).to.equal(201);
+        });
+
+        test("L’auteur est Hugo et le sujet n’a aucun like", function () {
+            const p = res.getBody();
+            expect(p.auteurId).to.equal(3);
+            expect(p.categorieLibelle).to.equal("Entraide");
+            expect(p.nombreLikes).to.equal(0);
+            expect(p.likeParMoi).to.equal(false);
+            bru.setVar("sujetId", p.id);
+        });
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
+
+docs: "Hugo publie un sujet dans la thématique Entraide : 201."

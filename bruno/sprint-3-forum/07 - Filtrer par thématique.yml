@@ -1,0 +1,38 @@
+info:
+  name: 07 - Filtrer par thématique
+  type: http
+  seq: 7
+
+http:
+  method: GET
+  url: "{{baseUrl}}/api/posts?categorieId=5"
+  headers:
+    - name: Accept
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{jetonHugo}}"
+
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("Statut HTTP 200", function () {
+            expect(res.getStatus()).to.equal(200);
+        });
+
+        test("Seulement la thématique Emploi", function () {
+            const liste = res.getBody();
+            expect(liste.length).to.be.at.least(1);
+            liste.forEach(p => expect(p.categorieId).to.equal(5));
+        });
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
+
+docs: "categorieId=5 : uniquement les sujets Emploi."

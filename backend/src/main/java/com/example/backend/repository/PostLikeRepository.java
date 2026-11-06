@@ -8,4 +8,6 @@ public interface PostLikeRepository extends JpaRepository<PostLike, PostLikeId> 
 
     // Nombre de likes d'un post
     long countByPostId(Integer postId);
+
+    // "Est-ce que j'ai déjà liké ce post ?" : on peut aussi utiliser existsById(new PostLikeId(userId, postId))
 }

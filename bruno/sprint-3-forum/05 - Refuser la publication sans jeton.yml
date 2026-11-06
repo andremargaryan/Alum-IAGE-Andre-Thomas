@@ -1,0 +1,40 @@
+info:
+  name: 05 - Refuser la publication sans jeton
+  type: http
+  seq: 5
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/posts"
+  headers:
+    - name: Accept
+      value: application/json
+
+    - name: Content-Type
+      value: application/json
+  auth: inherit
+  body:
+    type: json
+    data: |-
+      {
+        "titre": "Sujet de test Bruno",
+        "description": "Publié par les tests du forum.",
+        "categorieId": 6
+      }
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("Statut HTTP 401", function () {
+            expect(res.getStatus()).to.equal(401);
+        });
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
+
+docs: "Sans en-tête Authorization, l’intercepteur bloque la requête."
