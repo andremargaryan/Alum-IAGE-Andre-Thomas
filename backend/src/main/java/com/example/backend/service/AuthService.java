@@ -2,6 +2,7 @@ package com.example.backend.service;
 
 import com.example.backend.dto.AuthResponseDto;
 import com.example.backend.dto.LoginRequestDto;
+import com.example.backend.entity.StatutUser;
 import com.example.backend.entity.User;
 import com.example.backend.repository.UserRepository;
 import org.springframework.http.HttpStatus;
@@ -25,15 +26,12 @@ public class AuthService {
         User user = userRepository.findByEmail(loginDto.getEmail())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Identifiants invalides"));
 
-        // 2. Vérification de l'état du compte (si un champ/méthode statut existe)
-        if (user.getStatut() != null) {
-            String statut = user.getStatut().name();
-            if ("SUSPENDU".equalsIgnoreCase(statut) || "SUPPRIME".equalsIgnoreCase(statut)) {
-                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Ce compte est désactivé ou supprimé");
-            }
+        // 2. Seuls les comptes actifs peuvent se connecter
+        if (user.getStatut() != StatutUser.ACTIF) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Ce compte est désactivé ou supprimé");
         }
 
-        // 3. Vérification du mot de passe haché avec BCrypt
+        // 3. Vérification du mot de passe saisi avec BCrypt
         if (!passwordEncoder.matches(loginDto.getMotDePasse(), user.getMotDePasse())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Identifiants invalides");
         }
