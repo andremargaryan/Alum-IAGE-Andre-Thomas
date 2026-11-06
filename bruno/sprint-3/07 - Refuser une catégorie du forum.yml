@@ -1,0 +1,45 @@
+info:
+  name: 07 - Refuser une catégorie du forum
+  type: http
+  seq: 7
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/events"
+  headers:
+    - name: Accept
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{jetonLea}}"
+    - name: Content-Type
+      value: application/json
+  auth: inherit
+  body:
+    type: json
+    data: |-
+      {
+        "titre": "Soirée de test Bruno",
+        "description": "Créée par les tests du sprint 3.",
+        "categorieId": 5,
+        "dateEvenement": "2030-06-15T19:00:00",
+        "lieu": "Bar de test",
+        "adresse": "1 rue du Test, 75013 Paris",
+        "capaciteMax": 20
+      }
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("Statut HTTP 400", function () {
+            expect(res.getStatus()).to.equal(400);
+        });
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
+
+docs: "La catégorie 5 (Emploi) est une catégorie FORUM."

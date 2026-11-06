@@ -1,0 +1,44 @@
+info:
+  name: 01 - Connecter l’organisatrice Léa
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/auth/login"
+  headers:
+    - name: Accept
+      value: application/json
+
+    - name: Content-Type
+      value: application/json
+  auth: inherit
+  body:
+    type: json
+    data: |-
+      {
+        "email": "lea@alumni.test",
+        "motDePasse": "password"
+      }
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("Statut HTTP 200", function () {
+            expect(res.getStatus()).to.equal(200);
+        });
+
+        test("Le jeton est rangé dans la variable", function () {
+            expect(res.getBody().token).to.be.a("string");
+            bru.setVar("jetonLea", res.getBody().token);
+        });
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
+
+docs: "Compte ORGANISATEUR des données de départ."

@@ -1,0 +1,41 @@
+info:
+  name: 11 - Consulter un événement complet
+  type: http
+  seq: 11
+
+http:
+  method: GET
+  url: "{{baseUrl}}/api/events/1"
+  headers:
+    - name: Accept
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{jetonHugo}}"
+
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("Statut HTTP 200", function () {
+            expect(res.getStatus()).to.equal(200);
+        });
+
+        test("La jauge est calculée : 3 inscrits sur 3", function () {
+            const e = res.getBody();
+            expect(e.capaciteMax).to.equal(3);
+            expect(e.nombreInscrits).to.equal(3);
+            expect(e.placesRestantes).to.equal(0);
+            expect(e.complet).to.equal(true);
+            expect(e.tauxRemplissage).to.equal(100);
+        });
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
+
+docs: "L’événement 1 des données de départ : la personne en liste d’attente n’est pas comptée."

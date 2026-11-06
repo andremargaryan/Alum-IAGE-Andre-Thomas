@@ -1,0 +1,40 @@
+info:
+  name: 08 - Lister les événements à venir
+  type: http
+  seq: 8
+
+http:
+  method: GET
+  url: "{{baseUrl}}/api/events"
+  headers:
+    - name: Accept
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{jetonHugo}}"
+
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("Statut HTTP 200", function () {
+            expect(res.getStatus()).to.equal(200);
+        });
+
+        test("Liste triée par date et contenant l’événement créé", function () {
+            const liste = res.getBody();
+            expect(liste.some(e => e.id === Number(bru.getVar("evenementId")))).to.equal(true);
+            for (let i = 1; i < liste.length; i++) {
+                expect(liste[i - 1].dateEvenement <= liste[i].dateEvenement).to.equal(true);
+            }
+        });
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
+
+docs: "Tout utilisateur connecté peut consulter les événements."

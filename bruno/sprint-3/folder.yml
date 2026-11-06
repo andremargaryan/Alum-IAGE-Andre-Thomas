@@ -1,0 +1,13 @@
+info:
+  name: Sprint 3 - ALUMNI-10 Événements
+  type: folder
+  seq: 2
+
+request:
+  auth: inherit
+
+docs: |-
+  Lance le dossier dans l’ordre avec le backend Docker démarré sur localhost:8080.
+  Utilise les comptes des données de départ (mot de passe "password") :
+  Léa (ORGANISATEUR) crée l’événement, Hugo (ETUDIANT) doit être refusé.
+  L’événement 1 des données de départ a 3 places et 3 inscrits : il doit être complet.

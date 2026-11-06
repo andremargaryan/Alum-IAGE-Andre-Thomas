@@ -1,0 +1,34 @@
+info:
+  name: 10 - Filtrer par lieu
+  type: http
+  seq: 10
+
+http:
+  method: GET
+  url: "{{baseUrl}}/api/events?lieu=rue du test"
+  headers:
+    - name: Accept
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{jetonHugo}}"
+
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("Seul l’événement créé est trouvé", function () {
+            const liste = res.getBody();
+            expect(liste.length).to.be.at.least(1);
+            liste.forEach(e => expect(e.adresse.toLowerCase()).to.contain("rue du test"));
+        });
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
+
+docs: "Le lieu est cherché dans le lieu et l’adresse, sans tenir compte des majuscules."
