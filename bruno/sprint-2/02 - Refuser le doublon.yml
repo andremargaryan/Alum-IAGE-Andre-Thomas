@@ -1,7 +1,7 @@
 info:
-  name: 06 - Refuser un email déjà utilisé
+  name: 02 - Refuser le doublon
   type: http
-  seq: 6
+  seq: 2
 
 http:
   method: POST
@@ -16,14 +16,19 @@ http:
     type: json
     data: |-
       {
-        "prenom": "Camille",
-        "nom": "Test",
-        "email": "admin@alumni.test",
-        "motDePasse": "Essai2026!"
+        "prenom": "Bruno",
+        "nom": "Sprint2",
+        "email": "{{sprint2Email}}",
+        "motDePasse": "Sprint2Essai!"
       }
 
 runtime:
   scripts:
+    - type: before-request
+      code: |-
+        if (!bru.getVar("sprint2UserId")) {
+            throw new Error("Lance d’abord la requête 01 pour créer le compte du Sprint 2.");
+        }
     - type: tests
       code: |-
         test("Statut HTTP 409", function () {

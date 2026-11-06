@@ -1,0 +1,30 @@
+info:
+  name: 13 - Relire les formations
+  type: http
+  seq: 13
+
+http:
+  method: GET
+  url: "{{baseUrl}}/api/users/{{sprint2UserId}}/formations"
+  headers:
+    - name: Accept
+      value: application/json
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+        if (!bru.getVar("sprint2UserId")) {
+            throw new Error("Lance d’abord la requête 01 pour créer le compte du Sprint 2.");
+        }
+    - type: tests
+      code: |-
+        test("Statut HTTP 200", function () {
+            expect(res.getStatus()).to.equal(200);
+        });
+
+        test("La formation IBI créée figure dans la liste", function () {
+            const id = Number(bru.getVar("sprint2FormationId"));
+            expect(res.getBody().some(item => item.id === id && item.parcoursCode === "IBI")).to.equal(true);
+        });

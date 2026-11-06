@@ -1,0 +1,34 @@
+info:
+  name: 09 - Refuser un mauvais mot de passe
+  type: http
+  seq: 9
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/auth/login"
+  headers:
+    - name: Accept
+      value: application/json
+    - name: Content-Type
+      value: application/json
+  auth: inherit
+  body:
+    type: json
+    data: |-
+      {
+        "email": "{{sprint2Email}}",
+        "motDePasse": "incorrect"
+      }
+
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+        if (!bru.getVar("sprint2UserId")) {
+            throw new Error("Lance d’abord la requête 01 pour créer le compte du Sprint 2.");
+        }
+    - type: tests
+      code: |-
+        test("Statut HTTP 401", function () {
+            expect(res.getStatus()).to.equal(401);
+        });

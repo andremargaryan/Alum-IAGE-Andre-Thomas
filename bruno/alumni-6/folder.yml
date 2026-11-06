@@ -1,7 +1,0 @@
-info:
-  name: alumni-6
-  type: folder
-  seq: 1
-
-request:
-  auth: inherit

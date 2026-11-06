@@ -1,7 +1,7 @@
 info:
-  name: 07 - Refuser un email invalide
+  name: 05 - Refuser une inscription en administrateur
   type: http
-  seq: 7
+  seq: 5
 
 http:
   method: POST
@@ -18,8 +18,9 @@ http:
       {
         "prenom": "Camille",
         "nom": "Test",
-        "email": "email-invalide",
-        "motDePasse": "Essai2026!"
+        "email": "camille.inscription@example.test",
+        "motDePasse": "Essai2026!",
+        "role": "ADMIN"
       }
 
 runtime:

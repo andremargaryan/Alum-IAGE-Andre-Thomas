@@ -1,0 +1,27 @@
+info:
+  name: Sprint 2 - Parcours intégré
+  type: folder
+  seq: 1
+
+request:
+  auth: inherit
+
+docs: |-
+  Lance le dossier dans l’ordre avec le backend Docker démarré sur localhost:8080.
+  Le scénario crée un compte de test, puis effectue sa suppression logique.
+  La formation utilise Paris 1 et IBI, présents dans les données de départ.
+
+  ### ALUMNI-7 · Notification JMS
+
+  Après la requête 01, relève l’identifiant dans la réponse, puis lance cette requête
+  dans phpMyAdmin sur la base alumni. Remplace 123 par l’identifiant obtenu.
+
+  ```sql
+  SELECT l.user_id, n.titre, n.message, l.is_read
+  FROM liaison_notification l
+  JOIN notification n ON n.notif_id = l.notif_id
+  WHERE l.user_id = 123 AND n.titre = 'Bienvenue sur Alumni !';
+  ```
+
+  Une ligne doit apparaître après le traitement JMS, avec is_read à 0.
+  La requête 02 doit laisser une seule notification de bienvenue pour ce compte.

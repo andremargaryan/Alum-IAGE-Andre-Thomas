@@ -1,0 +1,41 @@
+info:
+  name: 08 - Connecter le compte créé
+  type: http
+  seq: 8
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/auth/login"
+  headers:
+    - name: Accept
+      value: application/json
+    - name: Content-Type
+      value: application/json
+  auth: inherit
+  body:
+    type: json
+    data: |-
+      {
+        "email": "{{sprint2Email}}",
+        "motDePasse": "Sprint2Essai!"
+      }
+
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+        if (!bru.getVar("sprint2UserId")) {
+            throw new Error("Lance d’abord la requête 01 pour créer le compte du Sprint 2.");
+        }
+    - type: tests
+      code: |-
+        test("Statut HTTP 200", function () {
+            expect(res.getStatus()).to.equal(200);
+        });
+
+        test("Le login retrouve le compte créé", function () {
+            const compte = res.getBody();
+            expect(compte.userId).to.equal(Number(bru.getVar("sprint2UserId")));
+            expect(compte.role).to.equal("ETUDIANT");
+            expect(compte).to.not.have.property("motDePasse");
+        });

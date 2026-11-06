@@ -1,0 +1,33 @@
+info:
+  name: 16 - Relire le compte modifié
+  type: http
+  seq: 16
+
+http:
+  method: GET
+  url: "{{baseUrl}}/users/{{sprint2UserId}}"
+  headers:
+    - name: Accept
+      value: application/json
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+        if (!bru.getVar("sprint2UserId")) {
+            throw new Error("Lance d’abord la requête 01 pour créer le compte du Sprint 2.");
+        }
+    - type: tests
+      code: |-
+        test("Statut HTTP 200", function () {
+            expect(res.getStatus()).to.equal(200);
+        });
+
+        test("La ville a été enregistrée", function () {
+            const compte = res.getBody();
+            expect(compte.id).to.equal(Number(bru.getVar("sprint2UserId")));
+            expect(compte.statut).to.equal("ACTIF");
+            expect(compte.ville).to.equal("Lyon");
+            expect(compte).to.not.have.property("motDePasse");
+        });

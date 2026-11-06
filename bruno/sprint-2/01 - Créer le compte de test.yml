@@ -1,0 +1,52 @@
+info:
+  name: 01 - Créer le compte de test
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{baseUrl}}/users"
+  headers:
+    - name: Accept
+      value: application/json
+    - name: Content-Type
+      value: application/json
+  auth: inherit
+  body:
+    type: json
+    data: |-
+      {
+        "prenom": "Bruno",
+        "nom": "Sprint2",
+        "email": "{{sprint2Email}}",
+        "motDePasse": "Sprint2Essai!"
+      }
+
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+        bru.setVar("sprint2UserId", "");
+        bru.setVar("sprint2ExperienceId", "");
+        bru.setVar("sprint2FormationId", "");
+        const suffixe = Date.now() + "-" + Math.random().toString(36).slice(2);
+        bru.setVar("sprint2Email", "sprint2." + suffixe + "@example.test");
+    - type: after-response
+      code: |-
+        if (res.getStatus() === 201) {
+            bru.setVar("sprint2UserId", String(res.getBody().id));
+        }
+    - type: tests
+      code: |-
+        test("Statut HTTP 201", function () {
+            expect(res.getStatus()).to.equal(201);
+        });
+
+        test("Compte actif créé avec le rôle ETUDIANT", function () {
+            const compte = res.getBody();
+            expect(compte.email).to.equal(bru.getVar("sprint2Email"));
+            expect(compte.statut).to.equal("ACTIF");
+            expect(compte.role).to.equal("ETUDIANT");
+            expect(compte).to.not.have.property("motDePasse");
+            expect(res.getHeader("location")).to.equal("/users/" + compte.id);
+        });

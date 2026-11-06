@@ -1,11 +1,11 @@
 info:
-  name: 12 - Supprimer le compte de test
+  name: 17 - Supprimer le compte
   type: http
-  seq: 12
+  seq: 17
 
 http:
   method: DELETE
-  url: "{{baseUrl}}/users/{{idCompteTest}}"
+  url: "{{baseUrl}}/users/{{sprint2UserId}}"
   headers:
     - name: Accept
       value: application/json
@@ -15,13 +15,11 @@ runtime:
   scripts:
     - type: before-request
       code: |-
-        if (!bru.getVar("idCompteTest")) {
-            throw new Error("Lance d’abord la requête 05 pour créer un compte de test.");
+        if (!bru.getVar("sprint2UserId")) {
+            throw new Error("Lance d’abord la requête 01 pour créer le compte du Sprint 2.");
         }
     - type: tests
       code: |-
         test("Statut HTTP 204", function () {
             expect(res.getStatus()).to.equal(204);
         });
-
-docs: Supprime le compte créé par la requête 05.

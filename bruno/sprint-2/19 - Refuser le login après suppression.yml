@@ -1,0 +1,34 @@
+info:
+  name: 19 - Refuser le login après suppression
+  type: http
+  seq: 19
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/auth/login"
+  headers:
+    - name: Accept
+      value: application/json
+    - name: Content-Type
+      value: application/json
+  auth: inherit
+  body:
+    type: json
+    data: |-
+      {
+        "email": "{{sprint2Email}}",
+        "motDePasse": "Sprint2Essai!"
+      }
+
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+        if (!bru.getVar("sprint2UserId")) {
+            throw new Error("Lance d’abord la requête 01 pour créer le compte du Sprint 2.");
+        }
+    - type: tests
+      code: |-
+        test("Statut HTTP 401", function () {
+            expect(res.getStatus()).to.equal(401);
+        });

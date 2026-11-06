@@ -1,7 +1,7 @@
 info:
-  name: 09 - Refuser une inscription en administrateur
+  name: 04 - Refuser un mot de passe trop court
   type: http
-  seq: 9
+  seq: 4
 
 http:
   method: POST
@@ -19,8 +19,7 @@ http:
         "prenom": "Camille",
         "nom": "Test",
         "email": "camille.inscription@example.test",
-        "motDePasse": "Essai2026!",
-        "role": "ADMIN"
+        "motDePasse": "abc"
       }
 
 runtime:

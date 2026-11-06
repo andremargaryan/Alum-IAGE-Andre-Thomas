@@ -18,10 +18,6 @@ request:
   variables:
     - name: baseUrl
       value: http://localhost:8080
-    - name: idActif
-      value: "1"
-    - name: idSupprime
-      value: "8"
     - name: idInconnu
       value: "2147483647"
 

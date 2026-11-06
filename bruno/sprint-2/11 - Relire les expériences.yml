@@ -1,0 +1,30 @@
+info:
+  name: 11 - Relire les expériences
+  type: http
+  seq: 11
+
+http:
+  method: GET
+  url: "{{baseUrl}}/api/users/{{sprint2UserId}}/experiences"
+  headers:
+    - name: Accept
+      value: application/json
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+        if (!bru.getVar("sprint2UserId")) {
+            throw new Error("Lance d’abord la requête 01 pour créer le compte du Sprint 2.");
+        }
+    - type: tests
+      code: |-
+        test("Statut HTTP 200", function () {
+            expect(res.getStatus()).to.equal(200);
+        });
+
+        test("L’expérience créée figure dans la liste", function () {
+            const id = Number(bru.getVar("sprint2ExperienceId"));
+            expect(res.getBody().some(item => item.id === id && item.poste === "Développeur")).to.equal(true);
+        });

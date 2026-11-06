@@ -1,0 +1,40 @@
+info:
+  name: 10 - Ajouter une expérience
+  type: http
+  seq: 10
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/users/{{sprint2UserId}}/experiences"
+  headers:
+    - name: Accept
+      value: application/json
+    - name: Content-Type
+      value: application/json
+  auth: inherit
+  body:
+    type: json
+    data: |-
+      {
+        "entreprise": "Alumni",
+        "poste": "Développeur",
+        "anneeDebut": 2024
+      }
+
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+        if (!bru.getVar("sprint2UserId")) {
+            throw new Error("Lance d’abord la requête 01 pour créer le compte du Sprint 2.");
+        }
+    - type: after-response
+      code: |-
+        if (res.getStatus() === 201) {
+            bru.setVar("sprint2ExperienceId", String(res.getBody().id));
+        }
+    - type: tests
+      code: |-
+        test("Statut HTTP 201", function () {
+            expect(res.getStatus()).to.equal(201);
+        });
