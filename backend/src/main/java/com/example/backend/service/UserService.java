@@ -6,6 +6,7 @@ import com.example.backend.dto.UserUpdateDto;
 import com.example.backend.entity.Role;
 import com.example.backend.entity.StatutUser;
 import com.example.backend.entity.User;
+import com.example.backend.messaging.EventProducer;
 import com.example.backend.repository.UserRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -24,10 +25,12 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EventProducer eventProducer;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, EventProducer eventProducer) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.eventProducer = eventProducer;
     }
 
     public UserResponseDto createUser(UserRegistrationDto registration) {
@@ -54,7 +57,11 @@ public class UserService {
         user.setVille(registration.getVille());
 
         try {
-            return toResponseDto(userRepository.save(user));
+            User savedUser = userRepository.save(user);
+
+            eventProducer.sendUserCreatedEvent(savedUser);
+
+            return toResponseDto(savedUser);
         } catch (DataIntegrityViolationException exception) {
             // Deux inscriptions peuvent passer le premier contrôle en même temps.
             if (userRepository.existsByEmail(email)) {
