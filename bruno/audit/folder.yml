@@ -1,0 +1,12 @@
+info:
+  name: Audit - Journal des actions
+  type: folder
+  seq: 4
+
+request:
+  auth: inherit
+
+docs: |-
+  Vérifie le journal d'audit (table journal_audit), lisible seulement par un ADMIN.
+  Comptes des données de départ, mot de passe "password" : admin@alumni.test et hugo@alumni.test.
+  Après le dossier sprint-2 (qui crée un compte), une ligne USER_CREATED doit aussi apparaître.

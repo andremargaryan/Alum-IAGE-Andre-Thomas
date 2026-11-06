@@ -1,0 +1,51 @@
+info:
+  name: 04 - Lire le journal (admin)
+  type: http
+  seq: 4
+
+http:
+  method: GET
+  url: "{{baseUrl}}/api/audit"
+  headers:
+    - name: Accept
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{jetonAdmin}}"
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("Statut HTTP 200", function () {
+            expect(res.getStatus()).to.equal(200);
+        });
+
+        test("Le refus 401 de la requête 03 est tracé, sans utilisateur", function () {
+            const ligne = res.getBody().find(l => l.route === "/api/events" && l.statutHttp === 401);
+            expect(ligne).to.not.equal(undefined);
+            expect(ligne.action).to.equal("REQUETE_API");
+            expect(ligne.methode).to.equal("GET");
+            expect(ligne.userId).to.equal(null);
+        });
+
+        test("Le login de l’admin est tracé", function () {
+            const ligne = res.getBody().find(l => l.route === "/api/auth/login" && l.statutHttp === 200);
+            expect(ligne).to.not.equal(undefined);
+        });
+
+        test("De la plus récente à la plus ancienne", function () {
+            const lignes = res.getBody();
+            for (let i = 1; i < lignes.length; i++) {
+                expect(lignes[i - 1].id > lignes[i].id).to.equal(true);
+            }
+        });
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
+
+docs: "Les 100 dernières lignes du journal. Après sprint-2, chercher aussi action = USER_CREATED."
